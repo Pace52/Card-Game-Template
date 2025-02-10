@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-
+//Test+
 public class Card : MonoBehaviour
 {
     public Card_data data;
