@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class Card : MonoBehaviour
+public partial class Card : MonoBehaviour
 {
     public Card_data data;
 
