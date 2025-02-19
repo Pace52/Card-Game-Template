@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c025b4487bfbb41fca186c7d9d6e18a5, type: 3}
-  m_Name: KH
+  m_Name: 8C
   m_EditorClassIdentifier: 
-  value: 10
-  suit: Heart
+  value: 8
+  suit: Club
   type: 0
   sprite: {fileID: 0}
-  number: 13
+  number: 8
