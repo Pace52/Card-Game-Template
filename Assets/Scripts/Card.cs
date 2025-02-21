@@ -7,13 +7,8 @@ using UnityEngine.UI;
 public partial class Card : MonoBehaviour
 {
     public Card_data data;
-    
-    public int value;
-    public string suit;
-    public int type;
-    public Sprite sprite;
-    public Image spriteImage;
-        
+
+
 
     // Start is called before the first frame update
     void Start()
