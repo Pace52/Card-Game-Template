@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 3f15739f4f41f43b4a491aaf890fa9cd, type: 2}
-  value: 0
+  value: 10
   suit: 
   type: 0
   sprite: {fileID: 0}
