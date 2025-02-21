@@ -52,8 +52,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: e32fa903c645c43efa5726e065343e03, type: 2}
-  value: 0
-  suit: 
+  value: 2
+  suit: Diamond
   type: 0
   sprite: {fileID: 0}
   nameText: {fileID: 7884059924108554137}
