@@ -55,12 +55,7 @@ MonoBehaviour:
   value: 2
   suit: Diamond
   type: 0
-  sprite: {fileID: 0}
-  nameText: {fileID: 7884059924108554137}
-  descriptionText: {fileID: 7374880375431829401}
-  healthText: {fileID: 3415455958271070831}
-  costText: {fileID: 1834597192991454445}
-  damageText: {fileID: 5894728742779797524}
+  sprite: {fileID: -5887565417888598206, guid: 7b58e4096a3074a6f8fe6c1f57059dfa, type: 3}
   spriteImage: {fileID: 8706265603331512291}
 --- !u!1 &2135455900782022775
 GameObject:

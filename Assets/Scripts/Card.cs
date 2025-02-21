@@ -12,11 +12,6 @@ public partial class Card : MonoBehaviour
     public string suit;
     public int type;
     public Sprite sprite;
-    public TextMeshProUGUI nameText;
-    public TextMeshProUGUI descriptionText;
-    public TextMeshProUGUI healthText;
-    public TextMeshProUGUI costText;
-    public TextMeshProUGUI damageText;
     public Image spriteImage;
         
 
