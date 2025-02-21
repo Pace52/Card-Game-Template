@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 970200069765969068}
   - component: {fileID: 4608709814338197990}
   m_Layer: 0
-  m_Name: AH 2
+  m_Name: 10S
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
