@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 2S
   m_EditorClassIdentifier: 
   value: 2
-  suit: Heart
+  suit: Spade
   type: 0
   sprite: {fileID: 0}
   number: 2
