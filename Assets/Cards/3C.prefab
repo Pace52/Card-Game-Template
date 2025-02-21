@@ -55,7 +55,7 @@ MonoBehaviour:
   value: 3
   suit: 
   type: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: 589550806907453026, guid: e83d75cd81b3f43cd8eddd2fc790226c, type: 3}
   nameText: {fileID: 7884059924108554137}
   descriptionText: {fileID: 7374880375431829401}
   healthText: {fileID: 3415455958271070831}
