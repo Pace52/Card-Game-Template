@@ -7,7 +7,10 @@ using UnityEngine.UI;
 public partial class Card : MonoBehaviour
 {
     public Card_data data;
-
+    public Sprite sprite;
+    public int value;
+    public string suit;
+    public int type;
 
 
     // Start is called before the first frame update
@@ -17,7 +20,7 @@ public partial class Card : MonoBehaviour
         suit = data.suit;
         type = data.type;
         sprite = data.sprite;
-        spriteImage.sprite = sprite;
+        //spriteImage.sprite = sprite;
 
     }
 
