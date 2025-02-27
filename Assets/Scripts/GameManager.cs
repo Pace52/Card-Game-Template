@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class BlackjackDealer : MonoBehaviour
 {
-    // Card ranks (used for simplicity, normally you can add the full card set)
-    private List<string> deck = new List<string>();
+    [SerializeField] private List<GameObject> cardPrefabs; // Assign your card prefabs in the inspector
+    [SerializeField] private Transform playerHandPosition; // Position where player cards should be dealt
+    [SerializeField] private Transform dealerHandPosition; // Position where dealer cards should be dealt
+    
+    private List<GameObject> deck = new List<GameObject>();
+    private List<GameObject> Player_hand = new List<GameObject>();
+    private List<GameObject> Ai_hand = new List<GameObject>();
 
-    // Player and Dealer hands
-    private List<string> Player_hand = new List<string>();
-    private List<string> Ai_hand = new List<string>();
+    // Spacing between cards
+    private float cardOffset = 1.5f;
 
-    // To visualize the cards, we can also create UI elements, but this is just logic
     public void StartGame()
     {
         // Step 1: Initialize the deck
@@ -30,51 +32,54 @@ public class BlackjackDealer : MonoBehaviour
         CalculateScore();
     }
 
-    // Initializes a deck with some simplified card values (normally, it includes suits as well)
     private void InitializeDeck()
     {
         deck.Clear();
-        // Add 4 suits of each value (simplified here as "2", "3", ... , "Ace")
-        string[] cardNumber = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14" };
-        foreach (var number in cardNumber)
+        foreach (GameObject cardPrefab in cardPrefabs)
         {
             for (int i = 0; i < 4; i++) // 4 suits
             {
-                deck.Add(number);
+                GameObject card = Instantiate(cardPrefab);
+                card.SetActive(false); // Hide cards initially
+                deck.Add(card);
             }
         }
     }
 
-    // Shuffle the deck using the Fisher-Yates algorithm
     private void ShuffleDeck()
     {
         for (int i = deck.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i);
             // Swap positions
-            string temp = deck[i];
+            GameObject temp = deck[i];
             deck[i] = deck[j];
             deck[j] = temp;
         }
     }
 
-    // Deal two cards to the player and two to the dealer
     private void DealInitialCards()
     {
         Player_hand.Clear();
         Ai_hand.Clear();
 
         // Deal two cards to player
-        Player_hand.Add(deck[0]);
-        Player_hand.Add(deck[1]);
-        deck.RemoveAt(0);
-        deck.RemoveAt(0);
+        DealCard(Player_hand, playerHandPosition, 0);
+        DealCard(Player_hand, playerHandPosition, 1);
 
         // Deal two cards to dealer
-        Ai_hand.Add(deck[0]);
-        Ai_hand.Add(deck[1]);
+        DealCard(Ai_hand, dealerHandPosition, 0);
+        DealCard(Ai_hand, dealerHandPosition, 1);
+    }
+
+    private void DealCard(List<GameObject> hand, Transform position, int cardIndex)
+    {
+        GameObject card = deck[0];
         deck.RemoveAt(0);
-        deck.RemoveAt(0);
+        
+        card.SetActive(true);
+        card.transform.position = position.position + new Vector3(cardIndex * cardOffset, 0, 0);
+        hand.Add(card);
     }
 
     // Print the current hands of player and dealer (for debugging)
@@ -86,6 +91,40 @@ public class BlackjackDealer : MonoBehaviour
 
     private void CalculateScore()
     {
+        Debug.Log("Player Score: " + CalculateHandScore(Player_hand));
+        Debug.Log("Dealer Score: " + CalculateHandScore(Ai_hand));
+    }
 
+    private int CalculateHandScore(List<GameObject> hand)
+    {
+        int score = 0;
+        int aceCount = 0;
+
+        foreach (GameObject cardObj in hand)
+        {
+            Card card = cardObj.GetComponent<Card>(); // Assuming you have a Card component
+            if (card.value == "A")
+            {
+                aceCount++;
+                score += 11;
+            }
+            else if (card.value == "K" || card.value == "Q" || card.value == "J")
+            {
+                score += 10;
+            }
+            else
+            {
+                score += int.Parse(card.value);
+            }
+        }
+
+        // Adjust for aces if score is over 21
+        while (score > 21 && aceCount > 0)
+        {
+            score -= 10;
+            aceCount--;
+        }
+
+        return score;
     }
 }
