@@ -2,62 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*public class GameManager : MonoBehaviour
-{
-    public static GameManager gm;
-    public List<Card> deck = new List<Card>();
-    public List<Card> player_deck = new List<Card>();
-    public List<Card> ai_deck = new List<Card>();
-    public List<Card> player_hand = new List<Card>();
-    public List<Card> ai_hand = new List<Card>();
-    public List<Card> discard_pile = new List<Card>();
-
-    public object RandomElement { get; private set; }
-
-    private void Awake()
-    {
-        if (gm != null && gm != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            gm = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void Deal()
-    {
-
-    }
-
-    void Shuffle()
-    {
-        
-    }
-
-    void AI_Turn()
-    {
-
-    }
-
-
-
-    
-}
-*/
 
 public class BlackjackDealer : MonoBehaviour
 {
@@ -82,6 +26,8 @@ public class BlackjackDealer : MonoBehaviour
 
         // Output the hands for now
         PrintHands();
+
+        CalculateScore();
     }
 
     // Initializes a deck with some simplified card values (normally, it includes suits as well)
@@ -89,12 +35,12 @@ public class BlackjackDealer : MonoBehaviour
     {
         deck.Clear();
         // Add 4 suits of each value (simplified here as "2", "3", ... , "Ace")
-        string[] cardValues = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
-        foreach (var value in cardValues)
+        string[] cardNumber = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14" };
+        foreach (var number in cardNumber)
         {
             for (int i = 0; i < 4; i++) // 4 suits
             {
-                deck.Add(value);
+                deck.Add(number);
             }
         }
     }
@@ -136,5 +82,10 @@ public class BlackjackDealer : MonoBehaviour
     {
         Debug.Log("Player Hand: " + string.Join(", ", Player_hand));
         Debug.Log("Dealer Hand: " + string.Join(", ", Ai_hand));
+    }
+
+    private void CalculateScore()
+    {
+
     }
 }
