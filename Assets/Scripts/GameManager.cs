@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlackjackDealer : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class BlackjackDealer : MonoBehaviour
 
     // Spacing between cards
     private float cardOffset = 1.5f;
+
+    [SerializeField] private Button hitButton;
+    [SerializeField] private Button standButton;
 
     public void StartGame()
     {
@@ -30,6 +34,10 @@ public class BlackjackDealer : MonoBehaviour
         PrintHands();
 
         CalculateScore();
+
+        // Add button listeners
+        hitButton.onClick.AddListener(PlayerHit);
+        standButton.onClick.AddListener(PlayerStand);
     }
 
     private void InitializeDeck()
@@ -126,5 +134,80 @@ public class BlackjackDealer : MonoBehaviour
         }
 
         return score;
+    }
+
+    private void PlayerHit()
+    {
+        // Deal one card to the player
+        DealCard(Player_hand, playerHandPosition, Player_hand.Count);
+        UpdateHandDisplay(Player_hand, playerHandPosition);
+
+        // Check if player busted
+        if (CalculateHandScore(Player_hand) > 21)
+        {
+            EndGame("Dealer wins! Player busted!");
+            DisableGameButtons();
+        }
+    }
+
+    private void PlayerStand()
+    {
+        DisableGameButtons();
+        StartCoroutine(DealerTurn());
+    }
+
+    private IEnumerator DealerTurn()
+    {
+        // Dealer hits on 16 or lower
+        while (CalculateHandScore(Ai_hand) <= 16)
+        {
+            yield return new WaitForSeconds(1f); // Add delay for better visualization
+            DealCard(Ai_hand, dealerHandPosition, Ai_hand.Count);
+            UpdateHandDisplay(Ai_hand, dealerHandPosition);
+        }
+
+        // Determine winner
+        int playerScore = CalculateHandScore(Player_hand);
+        int dealerScore = CalculateHandScore(Ai_hand);
+
+        if (dealerScore > 21)
+        {
+            EndGame("Player wins! Dealer busted!");
+        }
+        else if (dealerScore > playerScore)
+        {
+            EndGame("Dealer wins!");
+        }
+        else if (playerScore > dealerScore)
+        {
+            EndGame("Player wins!");
+        }
+        else
+        {
+            EndGame("It's a tie!");
+        }
+    }
+
+    private void DisableGameButtons()
+    {
+        hitButton.interactable = false;
+        standButton.interactable = false;
+    }
+
+    private void EnableGameButtons()
+    {
+        hitButton.interactable = true;
+        standButton.interactable = true;
+    }
+
+    private void EndGame(string result)
+    {
+        Debug.Log(result);
+        EnableGameButtons();
+    }
+
+    private void UpdateHandDisplay(List<GameObject> hand, Transform position)
+    {
+        // Implementation of UpdateHandDisplay method
     }
 }
