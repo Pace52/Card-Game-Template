@@ -102,19 +102,19 @@ public class BlackjackDealer : MonoBehaviour
 
         foreach (GameObject cardObj in hand)
         {
-            Card card = cardObj.GetComponent<Card>(); // Assuming you have a Card component
-            if (card.value == "A")
+            Card card = cardObj.GetComponent<Card>();
+            if (card.number == 1)
             {
                 aceCount++;
                 score += 11;
             }
-            else if (card.value == "K" || card.value == "Q" || card.value == "J")
+            else if (card.number == 13 || card.number == 12 || card.number == 11)
             {
                 score += 10;
             }
             else
             {
-                score += int.Parse(card.value);
+                score += (int)card.number;
             }
         }
 

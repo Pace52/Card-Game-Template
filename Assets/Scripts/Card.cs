@@ -10,6 +10,7 @@ public partial class Card : MonoBehaviour
     public Sprite sprite;
     public int value;
     public string suit;
+    public int number;
     public int type;
     public string valueString; // "2" through "10", "J", "Q", "K", "A"
     public string suitString; // Optional: "Hearts", "Diamonds", "Clubs", "Spades"
@@ -21,6 +22,7 @@ public partial class Card : MonoBehaviour
         value = data.value;
         suit = data.suit;
         type = data.type;
+        number = data.number;
         sprite = data.sprite;
         //spriteImage.sprite = sprite;
         valueString = value.ToString();
