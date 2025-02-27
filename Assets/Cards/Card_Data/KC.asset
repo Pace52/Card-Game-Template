@@ -15,5 +15,5 @@ MonoBehaviour:
   value: 10
   suit: Club
   type: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: 589550806907453026, guid: e83d75cd81b3f43cd8eddd2fc790226c, type: 3}
   number: 13

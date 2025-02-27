@@ -15,5 +15,5 @@ MonoBehaviour:
   value: 4
   suit: Heart
   type: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: -6721484226626663970, guid: 11dc084d5f4af46f3a3fd5d84eb12d99, type: 3}
   number: 4

@@ -15,5 +15,5 @@ MonoBehaviour:
   value: 10
   suit: Spade
   type: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: -2618457545831921757, guid: 5268f1249771347c7a98858f7d2dea0b, type: 3}
   number: 10

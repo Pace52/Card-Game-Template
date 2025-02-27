@@ -15,5 +15,5 @@ MonoBehaviour:
   value: 4
   suit: Diamond
   type: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: -5887565417888598206, guid: 7b58e4096a3074a6f8fe6c1f57059dfa, type: 3}
   number: 4
