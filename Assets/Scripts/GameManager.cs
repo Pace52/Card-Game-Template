@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class BlackjackDealer : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> cardPrefabs; // Assign your card prefabs in the inspector
-    [SerializeField] private Transform playerHandPosition; // Position where player cards should be dealt
-    [SerializeField] private Transform dealerHandPosition; // Position where dealer cards should be dealt
+    [SerializeField] public  List<GameObject> cardPrefabs; // Assign your card prefabs in the inspector
+    [SerializeField] public Transform playerHandPosition; // Position where player cards should be dealt
+    [SerializeField] public Transform dealerHandPosition; // Position where dealer cards should be dealt
     
-    private List<GameObject> deck = new List<GameObject>();
+    public List<GameObject> deck = new List<GameObject>();
     public List<GameObject> playerHand = new List<GameObject>();
     public List<GameObject> dealerHand = new List<GameObject>();
 
@@ -20,6 +20,8 @@ public class BlackjackDealer : MonoBehaviour
 
     [SerializeField] private Button hitButton;
     [SerializeField] private Button standButton;
+
+    [SerializeField] private GameObject cardPrefab; // Single card prefab reference
 
     public void AddCardToPlayerHand(GameObject card)
     {
@@ -100,34 +102,87 @@ public class BlackjackDealer : MonoBehaviour
     private void InitializeDeck()
     {
         deck.Clear();
-        Debug.Log($"Initializing deck with {cardPrefabs.Count} card prefabs");
-        if (cardPrefabs == null || cardPrefabs.Count == 0)
+        Debug.Log("[INIT] Starting deck initialization...");
+
+        if (cardPrefab == null)
         {
-            Debug.LogError("No card prefabs assigned!");
+            Debug.LogError("[INIT] ERROR: Card prefab not assigned! Check the Inspector!");
             return;
         }
 
-        foreach (GameObject cardPrefab in cardPrefabs)
+        // Create 52 cards (13 values × 4 suits)
+        for (int value = 1; value <= 13; value++) // 1 = Ace, 11 = Jack, 12 = Queen, 13 = King
         {
-            for (int i = 0; i < 4; i++) // 4 suits
+            for (int suit = 0; suit < 4; suit++) // 0 = Hearts, 1 = Diamonds, 2 = Clubs, 3 = Spades
             {
-                GameObject card = Instantiate(cardPrefab);
-                card.SetActive(false); // Hide cards initially
-                deck.Add(card);
+                GameObject cardObj = Instantiate(cardPrefab);
+                Card cardComponent = cardObj.GetComponent<Card>();
+                
+                if (cardComponent != null)
+                {
+                    cardComponent.number = value;
+                    cardComponent.suit = suit;
+                    cardObj.name = $"Card_{GetCardName(value)}_{GetSuitName(suit)}";
+                    cardObj.SetActive(false); // Hide initially
+                    deck.Add(cardObj);
+                    Debug.Log($"[INIT] Created {cardObj.name}");
+                }
+                else
+                {
+                    Debug.LogError("[INIT] ERROR: Card prefab missing Card component!");
+                    Destroy(cardObj);
+                }
             }
         }
-        Debug.Log($"Deck initialized with {deck.Count} cards");
+        
+        Debug.Log($"[INIT] Deck initialized with {deck.Count} cards");
+    }
+
+    private string GetCardName(int value)
+    {
+        switch (value)
+        {
+            case 1: return "Ace";
+            case 11: return "Jack";
+            case 12: return "Queen";
+            case 13: return "King";
+            default: return value.ToString();
+        }
+    }
+
+    private string GetSuitName(int suit)
+    {
+        switch (suit)
+        {
+            case 0: return "Hearts";
+            case 1: return "Diamonds";
+            case 2: return "Clubs";
+            case 3: return "Spades";
+            default: return "Unknown";
+        }
     }
 
     private void ShuffleDeck()
     {
-        for (int i = deck.Count - 1; i > 0; i--)
+        Debug.Log("Shuffling deck...");
+        System.Random rng = new System.Random();
+        
+        int n = deck.Count;
+        while (n > 1)
         {
-            int j = Random.Range(0, i);
-            // Swap positions
-            GameObject temp = deck[i];
-            deck[i] = deck[j];
-            deck[j] = temp;
+            n--;
+            int k = rng.Next(n + 1);
+            GameObject temp = deck[k];
+            deck[k] = deck[n];
+            deck[n] = temp;
+        }
+
+        // Debug output to verify shuffle
+        Debug.Log($"Deck shuffled. First few cards:");
+        for (int i = 0; i < Mathf.Min(5, deck.Count); i++)
+        {
+            Card card = deck[i].GetComponent<Card>();
+            Debug.Log($"Card {i + 1}: {card.number}");
         }
     }
 
