@@ -121,7 +121,7 @@ public class BlackjackDealer : MonoBehaviour
                 if (cardComponent != null)
                 {
                     cardComponent.number = value;
-                    cardComponent.suit = suit;
+                    cardComponent.suit = suit.ToString();
                     cardObj.name = $"Card_{GetCardName(value)}_{GetSuitName(suit)}";
                     cardObj.SetActive(false); // Hide initially
                     deck.Add(cardObj);
