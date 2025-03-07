@@ -10,37 +10,54 @@ public class BlackjackDealer : MonoBehaviour
     [SerializeField] private Transform dealerHandPosition; // Position where dealer cards should be dealt
     
     private List<GameObject> deck = new List<GameObject>();
-    private List<GameObject> playerHand = new List<GameObject>();
-    private List<GameObject> dealerHand = new List<GameObject>();
+    public List<GameObject> playerHand = new List<GameObject>();
+    public List<GameObject> dealerHand = new List<GameObject>();
 
-    // Spacing between cards
-    private float cardOffset = 1.5f;
+    // Card display positions
+    [SerializeField] private Transform playerCardSpot;
+    [SerializeField] private Transform dealerCardSpot;
+    private float cardSpacing = 1.5f; // Space between cards
 
     [SerializeField] private Button hitButton;
     [SerializeField] private Button standButton;
 
     public void AddCardToPlayerHand(GameObject card)
     {
-        int cardIndex = playerHand.Count;
-        card.SetActive(true);
-        card.transform.position = playerHandPosition.position + new Vector3(cardIndex * cardOffset, 0, 0);
-        card.transform.SetParent(playerHandPosition);
-        Card cardComponent = card.GetComponent<Card>();
-        cardComponent.Flip(true); // Player cards always face up
         playerHand.Add(card);
-        UpdateHandDisplay(playerHand, playerHandPosition);
+        ArrangeCards(playerHand, playerCardSpot);
     }
 
-    public void AddCardToDealerHand(GameObject card, bool faceUp = true) 
+    public void AddCardToDealerHand(GameObject card, bool faceUp = true)
     {
-        int cardIndex = dealerHand.Count;
-        card.SetActive(true);
-        card.transform.position = dealerHandPosition.position + new Vector3(cardIndex * cardOffset, 0, 0);
-        card.transform.SetParent(dealerHandPosition);
-        Card cardComponent = card.GetComponent<Card>();
-        cardComponent.Flip(faceUp);
         dealerHand.Add(card);
-        UpdateHandDisplay(dealerHand, dealerHandPosition);
+        ArrangeCards(dealerHand, dealerCardSpot);
+    }
+
+    private void ArrangeCards(List<GameObject> hand, Transform spotTransform)
+    {
+        for (int i = 0; i < hand.Count; i++)
+        {
+            GameObject card = hand[i];
+            Vector3 newPosition = spotTransform.position + new Vector3(i * cardSpacing, 0, 0);
+            
+            // Move the card to its new position
+            card.transform.position = newPosition;
+            card.transform.SetParent(spotTransform);
+            
+            // Make sure the card is visible and properly oriented
+            card.SetActive(true);
+            card.transform.rotation = spotTransform.rotation;
+            
+            // If it's a dealer card, handle face up/down
+            if (hand == dealerHand && i == 1) // Second dealer card
+            {
+                Card cardComponent = card.GetComponent<Card>();
+                if (cardComponent != null)
+                {
+                    cardComponent.Flip(false); // Face down
+                }
+            }
+        }
     }
 
     public void ClearHands()
@@ -123,18 +140,39 @@ public class BlackjackDealer : MonoBehaviour
         }
 
         Debug.Log("Dealing initial cards...");
+        
         // Deal two cards to player
-        AddCardToPlayerHand(deck[0]);
+        GameObject playerCard1 = deck[0];
         deck.RemoveAt(0);
-        AddCardToPlayerHand(deck[0]);
+        GameObject playerCard2 = deck[0];
         deck.RemoveAt(0);
+        
+        AddCardToPlayerHand(playerCard1);
+        AddCardToPlayerHand(playerCard2);
 
-        // Deal two cards to dealer - first face up, second face down
-        AddCardToDealerHand(deck[0], true);
+        // Deal two cards to dealer
+        GameObject dealerCard1 = deck[0];
         deck.RemoveAt(0);
-        AddCardToDealerHand(deck[0], false);
+        GameObject dealerCard2 = deck[0];
         deck.RemoveAt(0);
+        
+        AddCardToDealerHand(dealerCard1, true);  // First card face up
+        AddCardToDealerHand(dealerCard2, false); // Second card face down
+
         Debug.Log($"Initial deal complete. Player hand: {playerHand.Count}, Dealer hand: {dealerHand.Count}");
+        
+        // For debugging
+        foreach(GameObject card in playerHand)
+        {
+            Card cardComponent = card.GetComponent<Card>();
+            Debug.Log($"Player has card: {cardComponent.number}");
+        }
+        
+        foreach(GameObject card in dealerHand)
+        {
+            Card cardComponent = card.GetComponent<Card>();
+            Debug.Log($"Dealer has card: {cardComponent.number}");
+        }
     }
 
     // Print the current hands of player and dealer (for debugging)
@@ -187,8 +225,9 @@ public class BlackjackDealer : MonoBehaviour
     {
         if (deck.Count > 0)
         {
-            AddCardToPlayerHand(deck[0]);
+            GameObject newCard = deck[0];
             deck.RemoveAt(0);
+            AddCardToPlayerHand(newCard);
 
             // Check if player busted
             if (CalculateHandScore(playerHand) > 21)
@@ -253,10 +292,5 @@ public class BlackjackDealer : MonoBehaviour
     {
         Debug.Log(result);
         EnableGameButtons();
-    }
-
-    private void UpdateHandDisplay(List<GameObject> hand, Transform position)
-    {
-        // Implementation of UpdateHandDisplay method
     }
 }
