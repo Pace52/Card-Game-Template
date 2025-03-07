@@ -10,8 +10,8 @@ public class BlackjackDealer : MonoBehaviour
     [SerializeField] private Transform dealerHandPosition; // Position where dealer cards should be dealt
     
     private List<GameObject> deck = new List<GameObject>();
-    private List<GameObject> Player_hand = new List<GameObject>();
-    private List<GameObject> Ai_hand = new List<GameObject>();
+    private List<GameObject> playerHand = new List<GameObject>();
+    private List<GameObject> dealerHand = new List<GameObject>();
 
     // Spacing between cards
     private float cardOffset = 1.5f;
@@ -19,8 +19,48 @@ public class BlackjackDealer : MonoBehaviour
     [SerializeField] private Button hitButton;
     [SerializeField] private Button standButton;
 
+    public void AddCardToPlayerHand(GameObject card)
+    {
+        int cardIndex = playerHand.Count;
+        card.SetActive(true);
+        card.transform.position = playerHandPosition.position + new Vector3(cardIndex * cardOffset, 0, 0);
+        card.transform.SetParent(playerHandPosition);
+        Card cardComponent = card.GetComponent<Card>();
+        cardComponent.Flip(true); // Player cards always face up
+        playerHand.Add(card);
+        UpdateHandDisplay(playerHand, playerHandPosition);
+    }
+
+    public void AddCardToDealerHand(GameObject card, bool faceUp = true) 
+    {
+        int cardIndex = dealerHand.Count;
+        card.SetActive(true);
+        card.transform.position = dealerHandPosition.position + new Vector3(cardIndex * cardOffset, 0, 0);
+        card.transform.SetParent(dealerHandPosition);
+        Card cardComponent = card.GetComponent<Card>();
+        cardComponent.Flip(faceUp);
+        dealerHand.Add(card);
+        UpdateHandDisplay(dealerHand, dealerHandPosition);
+    }
+
+    public void ClearHands()
+    {
+        foreach(GameObject card in playerHand)
+        {
+            Destroy(card);
+        }
+        foreach(GameObject card in dealerHand)
+        {
+            Destroy(card);
+        }
+        playerHand.Clear();
+        dealerHand.Clear();
+    }
+
     public void StartGame()
     {
+        ClearHands();
+        
         // Step 1: Initialize the deck
         InitializeDeck();
 
@@ -43,6 +83,13 @@ public class BlackjackDealer : MonoBehaviour
     private void InitializeDeck()
     {
         deck.Clear();
+        Debug.Log($"Initializing deck with {cardPrefabs.Count} card prefabs");
+        if (cardPrefabs == null || cardPrefabs.Count == 0)
+        {
+            Debug.LogError("No card prefabs assigned!");
+            return;
+        }
+
         foreach (GameObject cardPrefab in cardPrefabs)
         {
             for (int i = 0; i < 4; i++) // 4 suits
@@ -52,6 +99,7 @@ public class BlackjackDealer : MonoBehaviour
                 deck.Add(card);
             }
         }
+        Debug.Log($"Deck initialized with {deck.Count} cards");
     }
 
     private void ShuffleDeck()
@@ -68,39 +116,38 @@ public class BlackjackDealer : MonoBehaviour
 
     private void DealInitialCards()
     {
-        Player_hand.Clear();
-        Ai_hand.Clear();
+        if (deck.Count < 4)
+        {
+            Debug.LogError($"Not enough cards in deck to deal! Deck count: {deck.Count}");
+            return;
+        }
 
+        Debug.Log("Dealing initial cards...");
         // Deal two cards to player
-        DealCard(Player_hand, playerHandPosition, 0);
-        DealCard(Player_hand, playerHandPosition, 1);
-
-        // Deal two cards to dealer
-        DealCard(Ai_hand, dealerHandPosition, 0);
-        DealCard(Ai_hand, dealerHandPosition, 1);
-    }
-
-    private void DealCard(List<GameObject> hand, Transform position, int cardIndex)
-    {
-        GameObject card = deck[0];
+        AddCardToPlayerHand(deck[0]);
         deck.RemoveAt(0);
-        
-        card.SetActive(true);
-        card.transform.position = position.position + new Vector3(cardIndex * cardOffset, 0, 0);
-        hand.Add(card);
+        AddCardToPlayerHand(deck[0]);
+        deck.RemoveAt(0);
+
+        // Deal two cards to dealer - first face up, second face down
+        AddCardToDealerHand(deck[0], true);
+        deck.RemoveAt(0);
+        AddCardToDealerHand(deck[0], false);
+        deck.RemoveAt(0);
+        Debug.Log($"Initial deal complete. Player hand: {playerHand.Count}, Dealer hand: {dealerHand.Count}");
     }
 
     // Print the current hands of player and dealer (for debugging)
     private void PrintHands()
     {
-        Debug.Log("Player Hand: " + string.Join(", ", Player_hand));
-        Debug.Log("Dealer Hand: " + string.Join(", ", Ai_hand));
+        Debug.Log("Player Hand: " + string.Join(", ", playerHand));
+        Debug.Log("Dealer Hand: " + string.Join(", ", dealerHand));
     }
 
     private void CalculateScore()
     {
-        Debug.Log("Player Score: " + CalculateHandScore(Player_hand));
-        Debug.Log("Dealer Score: " + CalculateHandScore(Ai_hand));
+        Debug.Log("Player Score: " + CalculateHandScore(playerHand));
+        Debug.Log("Dealer Score: " + CalculateHandScore(dealerHand));
     }
 
     private int CalculateHandScore(List<GameObject> hand)
@@ -138,15 +185,17 @@ public class BlackjackDealer : MonoBehaviour
 
     private void PlayerHit()
     {
-        // Deal one card to the player
-        DealCard(Player_hand, playerHandPosition, Player_hand.Count);
-        UpdateHandDisplay(Player_hand, playerHandPosition);
-
-        // Check if player busted
-        if (CalculateHandScore(Player_hand) > 21)
+        if (deck.Count > 0)
         {
-            EndGame("Dealer wins! Player busted!");
-            DisableGameButtons();
+            AddCardToPlayerHand(deck[0]);
+            deck.RemoveAt(0);
+
+            // Check if player busted
+            if (CalculateHandScore(playerHand) > 21)
+            {
+                EndGame("Dealer wins! Player busted!");
+                DisableGameButtons();
+            }
         }
     }
 
@@ -159,16 +208,16 @@ public class BlackjackDealer : MonoBehaviour
     private IEnumerator DealerTurn()
     {
         // Dealer hits on 16 or lower
-        while (CalculateHandScore(Ai_hand) <= 16)
+        while (CalculateHandScore(dealerHand) <= 16 && deck.Count > 0)
         {
             yield return new WaitForSeconds(1f); // Add delay for better visualization
-            DealCard(Ai_hand, dealerHandPosition, Ai_hand.Count);
-            UpdateHandDisplay(Ai_hand, dealerHandPosition);
+            AddCardToDealerHand(deck[0], true);
+            deck.RemoveAt(0);
         }
 
         // Determine winner
-        int playerScore = CalculateHandScore(Player_hand);
-        int dealerScore = CalculateHandScore(Ai_hand);
+        int playerScore = CalculateHandScore(playerHand);
+        int dealerScore = CalculateHandScore(dealerHand);
 
         if (dealerScore > 21)
         {

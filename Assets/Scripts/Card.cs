@@ -14,7 +14,7 @@ public partial class Card : MonoBehaviour
     public int type;
     public string valueString; // "2" through "10", "J", "Q", "K", "A"
     public string suitString; // Optional: "Hearts", "Diamonds", "Clubs", "Spades"
-
+    private bool isFaceUp = true;
 
     // Start is called before the first frame update
     void Start()
@@ -33,5 +33,13 @@ public partial class Card : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void Flip(bool faceUp)
+    {
+        isFaceUp = faceUp;
+        // Add animation or sprite switching logic here
+        // For example:
+        // spriteRenderer.sprite = faceUp ? frontSprite : backSprite;
     }
 }
